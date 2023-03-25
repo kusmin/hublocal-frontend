@@ -1,28 +1,28 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import AuthService from './service/AuthService';
 import { login } from './store/slices/authSlice';
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const loggedInUser = localStorage.getItem('user');
-
+    const loggedInUser = AuthService.usuarioCorrente();
     if (loggedInUser) {
-      const user = JSON.parse(loggedInUser);
-      dispatch(login(user));
+      dispatch(login(loggedInUser));
     }
   }, [dispatch]);
+
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        {/* Utilize o componente PrivateRoute para rotas protegidas: */}
-        {/* <PrivateRoute path="/" element={<HomePage />} /> */}
+        <Route path="/" element={<HomePage />} />
       </Routes>
     </Router>
   );

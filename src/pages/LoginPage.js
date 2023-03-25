@@ -4,6 +4,8 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { showToast } from "../components/Toast";
 import AuthService from "../service/AuthService";
 import { login } from "../store/slices/authSlice";
 
@@ -112,10 +114,16 @@ const LoginPage = () => {
 
     try {
       const response = await AuthService.auth({ username: email, password });
+      showToast("success", "Logado com sucesso!");
       AuthService.setUsuarioCorrente(response.data);
       dispatch(login(response.data));
       navigate("/");
     } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Ocorreu um erro ao logar. Por favor,verifique suas credenciais e tente novamente.",
+      });
       console.error(error);
     }
   };

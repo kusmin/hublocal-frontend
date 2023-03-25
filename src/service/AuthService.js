@@ -27,6 +27,11 @@ const AuthService = {
     }
   },
 
+  logout: () => {
+    localStorage.clear();
+    sessionStorage.clear();
+  },
+
   auth: (credenciais) => {
     return axios.post(
       process.env.REACT_APP_HOST_API + "/auth/login",
