@@ -30,8 +30,8 @@ const HomePage = () => {
   const [editingCompany, setEditingCompany] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [totalEmpresas, setTotalEmpresas] = useState(0)
-  const [title, setTitle] = useState("Minhas Empresas")
+  const [totalEmpresas, setTotalEmpresas] = useState(0);
+  const [title, setTitle] = useState("Minhas Empresas");
 
   useEffect(() => {
     loadCompanies(page, rowsPerPage);
@@ -44,7 +44,7 @@ const HomePage = () => {
         limite: parseInt(limite),
       });
       setUserCompanies(response.data.empresas);
-      setTotalEmpresas(response.data.totalEmpresas)
+      setTotalEmpresas(response.data.totalEmpresas);
     } catch (error) {
       console.error("Erro ao carregar as empresas do usuário:", error);
     }
@@ -63,7 +63,7 @@ const HomePage = () => {
     setOpenModal(true);
   };
 
-  const handleCompanyAdded = async (company) => {
+  const handleCompanyAdded = async (company, callback) => {
     if (editingCompany) {
       try {
         const updatedCompany = await EmpresaService.updateEmpresa(
@@ -77,12 +77,12 @@ const HomePage = () => {
         );
         handleCloseModal();
         showToast("success", "Empresa atualizada com sucesso!");
+        callback()
       } catch (e) {
-        Swal.fire({
-          icon: "error",
-          title: "Erro",
-          text: "Ocorreu um erro ao atualizar a empresa. Por favor, verifique as informações inseridas e tente novamente.",
-        });
+        showToast(
+          "error",
+          "Ocorreu um erro ao atualizar a empresa. Por favor, verifique as informações inseridas e tente novamente."
+        );
         console.error(e);
       }
     } else {
@@ -91,12 +91,12 @@ const HomePage = () => {
         setUserCompanies([...userCompanies, novaEmpresa.data]);
         handleCloseModal();
         showToast("success", "Empresa criada com sucesso!");
+        callback()
       } catch (e) {
-        Swal.fire({
-          icon: "error",
-          title: "Erro",
-          text: "Ocorreu ao criar a empresa. Por favor,verifique as informaçoes inseridas e tente novamente.",
-        });
+        showToast(
+          "error",
+          "Ocorreu ao criar a empresa. Por favor,verifique as informaçoes inseridas e tente novamente."
+        );
         console.error(e);
       }
     }
@@ -105,9 +105,11 @@ const HomePage = () => {
   const handleDeleteCompany = async (companyId, callback) => {
     try {
       await EmpresaService.deleteEmpresa(companyId);
-      setUserCompanies(userCompanies.filter((company) => company.id !== companyId));
+      setUserCompanies(
+        userCompanies.filter((company) => company.id !== companyId)
+      );
       showToast("success", "Empresa excluída com sucesso!");
-      callback()
+      callback();
     } catch (e) {
       Swal.fire({
         icon: "error",

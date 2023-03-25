@@ -1,7 +1,8 @@
 import { Box, Button, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import ArrowBack from "@material-ui/icons/ArrowBack";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import CreateLocalModal from "../components/CriarLocal";
 import Header from "../components/Header";
@@ -22,6 +23,15 @@ const useStyles = makeStyles((theme) => ({
       background: "#0361A9",
     },
   },
+  backButton: {
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(2),
+    background: "white", 
+    color: "black", 
+    "&:hover": {
+      background: "#f0f0f0", 
+    },
+  },
 }));
 
 const Locais = () => {
@@ -34,10 +44,15 @@ const Locais = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalLocals, setTotalLocals] = useState(0);
   const [title, setTitle] = useState("Minhas Locals");
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadLocations(page, rowsPerPage);
   }, [page, rowsPerPage]);
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
 
   const loadLocations = async (pagina, limite) => {
     try {
@@ -66,7 +81,7 @@ const Locais = () => {
     setOpenModal(true);
   };
 
-  const handleCompanyAdded = async (local) => {
+  const handleCompanyAdded = async (local, callback) => {
     local.empresaId = id;
     if (editingLocal) {
       try {
@@ -81,6 +96,7 @@ const Locais = () => {
         );
         handleCloseModal();
         showToast("success", "Local atualizada com sucesso!");
+        callback()
       } catch (e) {
         Swal.fire({
           icon: "error",
@@ -95,12 +111,9 @@ const Locais = () => {
         setUserLocations([...userLocations, novaLocal.data]);
         handleCloseModal();
         showToast("success", "Local criada com sucesso!");
+        callback()
       } catch (e) {
-        Swal.fire({
-          icon: "error",
-          title: "Erro",
-          text: "Ocorreu ao criar a local. Por favor,verifique as informaçoes inseridas e tente novamente.",
-        });
+        showToast("error",  "Ocorreu um erro ao criar a local. Por favor,verifique as informaçoes inseridas e tente novamente.");
         console.error(e);
       }
     }
@@ -127,6 +140,15 @@ const Locais = () => {
   return (
     <ProtectedLayout>
       <Header title={title} />
+        <Button
+          className={classes.backButton}
+          color="primary"
+          variant="contained"
+          onClick={handleGoBack}
+          startIcon={<ArrowBack />} // Adicione o ícone ArrowBack aqui
+        >
+          Minhas empresas
+        </Button>
       {userLocations && userLocations.length > 0 ? (
         <Box alignItems="center" height="calc(100vh - 128px)">
           <ListarLocais

@@ -107,11 +107,11 @@ const CreateCompanyModal = ({ open, onClose, onSubmit, editingCompany }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (validateFields()) {
-      onSubmit({ nome:name, website, cnpj });
-      onCloseModal();
+      onSubmit({ nome:name, website, cnpj }, onCloseModal);
     }
   };
 
+  
   const onCloseModal = () => {
     setCnpj("")
     setWebsite("")

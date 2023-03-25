@@ -175,8 +175,7 @@ const CreateLocalModal = ({ open, onClose, onSubmit, editingLocal }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (validateFields()) {
-      onSubmit({ nome, cep, rua, numero, bairro, cidade, estado });
-      onCloseModal();
+      onSubmit({ nome, cep: cep.trim().replace("-", ""), rua, numero, bairro, cidade, estado }, onCloseModal);
     }
   };
 
