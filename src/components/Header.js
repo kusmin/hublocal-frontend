@@ -68,7 +68,6 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const userName = useSelector((state) => state.auth.user.user.nome);
-  console.log(useSelector((state) => state.auth));
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);

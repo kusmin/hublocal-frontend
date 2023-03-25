@@ -19,9 +19,9 @@ const AuthService = {
   },
 
   token: () => {
-    let corrente = this.usuarioCorrente();
+    let corrente = AuthService.usuarioCorrente();
     if (corrente) {
-      return corrente.token;
+      return corrente.access_token;
     } else {
       return null;
     }
