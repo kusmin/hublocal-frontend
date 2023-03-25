@@ -12,10 +12,9 @@ import {
   TableRow
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Delete, Edit, LocationOn } from "@material-ui/icons";
+import { Delete, Edit } from "@material-ui/icons";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import DeleteCompanyModal from "./DeletaEmpresa";
+import DeleteLocationModal from "./DeleteLocal";
 
 const useStyles = makeStyles((theme) => ({
   addButton: {
@@ -41,49 +40,42 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompanyList = ({
-  companies,
+const LocationList = ({
+  locations,
   handleOpenModal,
-  handleEditCompany,
+  handleEditLocation,
   page,
   rowsPerPage,
   setPage,
   setRowsPerPage,
-  loadCompanies,
-  totalCompanys,
-  handleDeleteCompany,
+  loadLocations,
+  totalLocations,
+  handleDeleteLocation,
 }) => {
   const classes = useStyles();
-  const navigate = useNavigate();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
-  const handleOpenDeleteModal = (company) => {
-    setSelectedCompany(company);
+  const handleOpenDeleteModal = (location) => {
+    setSelectedLocation(location);
     setDeleteModalOpen(true);
   };
 
   const handleCloseDeleteModal = () => {
-    setSelectedCompany(null);
+    setSelectedLocation(null);
     setDeleteModalOpen(false);
   };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    loadCompanies(newPage, rowsPerPage);
+    loadLocations(newPage, rowsPerPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPage(newRowsPerPage);
     setPage(0);
-    loadCompanies(0, newRowsPerPage);
-  };
-
-  const handleLocationListClick = (company) => {
-    navigate(`/local/${company.id}`, {
-      state: { locais: company.locais, nome: company.nome },
-    });
+    loadLocations(0, newRowsPerPage);
   };
 
   return (
@@ -94,50 +86,43 @@ const CompanyList = ({
           className={classes.addButton}
           onClick={handleOpenModal}
         >
-          Adicionar Empresa
+          Adicionar Local
         </Button>
       </Box>
-      <DeleteCompanyModal
+      <DeleteLocationModal
         open={deleteModalOpen}
         onClose={handleCloseDeleteModal}
-        onDelete={handleDeleteCompany}
-        companyName={selectedCompany?.nome}
-        companyId={selectedCompany?.id}
+        onDelete={handleDeleteLocation}
+        locationName={selectedLocation?.nome}
+        locationId={selectedLocation?.id}
       />
       <TableContainer component={Paper} className={classes.tableContainer}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell className={classes.tableHeader}>Empresa</TableCell>
-              <TableCell className={classes.tableHeader}>
-                Qt de Locais
-              </TableCell>
+              <TableCell className={classes.tableHeader}>Local</TableCell>
+              
               <TableCell className={classes.tableHeader}>Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {companies.map((company) => (
-              <TableRow key={company.id}>
-                <TableCell>{company.nome}</TableCell>
-                <TableCell>{company.qtTotalLocais}</TableCell>
+            {locations.map((location) => (
+              <TableRow key={location.id}>
+                <TableCell>{location.nome}</TableCell>
+                
                 <TableCell>
                   <IconButton
                     className={classes.icon}
                     color="primary"
-                    onClick={() => handleEditCompany(company)}
+                    onClick={() => handleEditLocation(location)}
                   >
                     <Edit />
                   </IconButton>
-                  <IconButton
-                    className={classes.icon}
-                    color="primary"
-                    onClick={() => handleLocationListClick(company)}
-                  >
-                    <LocationOn />
-                  </IconButton>
+                
+                  
                   <IconButton
                     color="secondary"
-                    onClick={() => handleOpenDeleteModal(company)}
+                    onClick={() => handleOpenDeleteModal(location)}
                   >
                     <Delete />
                   </IconButton>
@@ -148,7 +133,7 @@ const CompanyList = ({
         </Table>
         <TablePagination
           component="div"
-          count={totalCompanys}
+          count={totalLocations}
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
@@ -160,4 +145,4 @@ const CompanyList = ({
   );
 };
 
-export default CompanyList;
+export default LocationList;

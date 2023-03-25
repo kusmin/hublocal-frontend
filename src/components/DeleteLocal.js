@@ -34,19 +34,18 @@ const useStyles = makeStyles((theme) => ({
   },
   deleteButton: {
     backgroundColor: theme.palette.error.main,
-    marginRight: theme.spacing(1),
     color: '#FFFFFF',
     fontWeight: 600,
     '&:hover': {
       backgroundColor: theme.palette.error.dark,
     },
   },
-  companyName: {
+  locationName: {
     fontWeight: 700,
   },
 }));
 
-const DeleteCompanyModal = ({ open, onClose, onDelete, companyName, companyId }) => {
+const DeleteLocalModal = ({ open, onClose, onDelete, locationName, locationId }) => {
   const classes = useStyles();
 
   return (
@@ -66,13 +65,13 @@ const DeleteCompanyModal = ({ open, onClose, onDelete, companyName, companyId })
           </Box>
         <Box p={2} display="flex" flexDirection="column" minHeight={200} justifyContent="space-between">
             <Typography variant="h5" p={3}>
-              A empresa <span className={classes.companyName}>{companyName}</span> será excluída. Tem certeza dessa ação?
+              O local <span className={classes.locationName}>{locationName}</span> será excluída. Tem certeza dessa ação?
             </Typography>
             <Box display="flex" justifyContent="flex-end" marginTop="1em">
               <Button
                 variant="contained"
                 className={classes.deleteButton}
-                onClick={()=> onDelete(companyId, onClose)}
+                onClick={()=> onDelete(locationId, onClose)}
               >
                 Excluir
               </Button>
@@ -84,4 +83,4 @@ const DeleteCompanyModal = ({ open, onClose, onDelete, companyName, companyId })
   );
 };
 
-export default DeleteCompanyModal;
+export default DeleteLocalModal;
