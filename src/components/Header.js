@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = () => {
+const Header = ({title}) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -91,7 +91,7 @@ const Header = () => {
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
             <BusinessIcon className={classes.companyIcon} />
-            Minhas Empresas
+            {title}
           </Typography>
           <div className={classes.menu}>
             <AccountCircleIcon className={classes.userIcon} />

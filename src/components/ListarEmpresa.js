@@ -1,34 +1,39 @@
 import {
-  Box, Button, IconButton,
-  Paper, Table,
+  Box,
+  Button,
+  IconButton,
+  Paper,
+  Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead, TablePagination, TableRow
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { Delete, Edit, LocationOn } from '@material-ui/icons';
-import React, { useState } from 'react';
-import DeleteCompanyModal from './DeletaEmpresa';
-
+  TableHead,
+  TablePagination,
+  TableRow
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { Delete, Edit, LocationOn } from "@material-ui/icons";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import DeleteCompanyModal from "./DeletaEmpresa";
 
 const useStyles = makeStyles((theme) => ({
   addButton: {
-    background: '#0385FD',
-    boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.25)',
+    background: "#0385FD",
+    boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.25)",
     borderRadius: 5,
-    color: 'white',
+    color: "white",
     fontWeight: 700,
-    marginTop: '1em',
-    '&:hover': {
-      background: '#0361A9',
+    marginTop: "1em",
+    "&:hover": {
+      background: "#0361A9",
     },
   },
-   tableContainer: {
-    width: '100%',
+  tableContainer: {
+    width: "100%",
   },
-    icon: {
-    color: 'black',
+  icon: {
+    color: "black",
   },
   tableHeader: {
     fontWeight: 700,
@@ -36,7 +41,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompanyList = ({ companies,
+const CompanyList = ({
+  companies,
   handleOpenModal,
   handleEditCompany,
   page,
@@ -44,9 +50,11 @@ const CompanyList = ({ companies,
   setPage,
   setRowsPerPage,
   loadCompanies,
-handleDeleteCompany}) => {
+  totalCompanys,
+  handleDeleteCompany,
+}) => {
   const classes = useStyles();
-
+  const navigate = useNavigate();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
 
@@ -59,7 +67,6 @@ handleDeleteCompany}) => {
     setSelectedCompany(null);
     setDeleteModalOpen(false);
   };
- 
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -73,61 +80,80 @@ handleDeleteCompany}) => {
     loadCompanies(0, newRowsPerPage);
   };
 
+  const handleLocationListClick = (company) => {
+    navigate(`/local`, {
+      state: { locais: company.locais, nome: company.nome },
+    });
+  };
+
   return (
     <Box display="flex" flexDirection="column" p={10}>
       <Box display="flex" justifyContent="flex-end" marginBottom={2}>
-        <Button variant="contained" className={classes.addButton}  onClick={handleOpenModal}>
+        <Button
+          variant="contained"
+          className={classes.addButton}
+          onClick={handleOpenModal}
+        >
           Adicionar Empresa
         </Button>
       </Box>
       <DeleteCompanyModal
-      open={deleteModalOpen}
-      onClose={handleCloseDeleteModal}
-      onDelete={handleDeleteCompany}
+        open={deleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onDelete={handleDeleteCompany}
         companyName={selectedCompany?.nome}
         companyId={selectedCompany?.id}
-    />
+      />
       <TableContainer component={Paper} className={classes.tableContainer}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell className={classes.tableHeader}>Empresa</TableCell>
-              <TableCell className={classes.tableHeader}>Qt de Locais</TableCell>
+              <TableCell className={classes.tableHeader}>
+                Qt de Locais
+              </TableCell>
               <TableCell className={classes.tableHeader}>Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {companies
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((company) => (
-                <TableRow key={company.id}>
-                  <TableCell>{company.nome}</TableCell>
-                  <TableCell>{company.qtTotalLocais}</TableCell>
-                  <TableCell>
-                    <IconButton className={classes.icon} color="primary" onClick={() => handleEditCompany(company)}>
-                      <Edit />
-                    </IconButton>
-                    <IconButton className={classes.icon} color="primary">
-                      <LocationOn />
-                    </IconButton>
-                    <IconButton color="secondary"
-                       onClick={() => handleOpenDeleteModal(company)}
-                     >
-                      <Delete />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+            {companies.map((company) => (
+              <TableRow key={company.id}>
+                <TableCell>{company.nome}</TableCell>
+                <TableCell>{company.qtTotalLocais}</TableCell>
+                <TableCell>
+                  <IconButton
+                    className={classes.icon}
+                    color="primary"
+                    onClick={() => handleEditCompany(company)}
+                  >
+                    <Edit />
+                  </IconButton>
+                  <IconButton
+                    className={classes.icon}
+                    color="primary"
+                    onClick={() => handleLocationListClick(company)}
+                  >
+                    <LocationOn />
+                  </IconButton>
+                  <IconButton
+                    color="secondary"
+                    onClick={() => handleOpenDeleteModal(company)}
+                  >
+                    <Delete />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
         <TablePagination
           component="div"
-        count={companies.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        labelRowsPerPage="Quantidade por página:"
+          count={totalCompanys}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          labelRowsPerPage="Quantidade por página:"
         />
       </TableContainer>
     </Box>

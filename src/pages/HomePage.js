@@ -30,6 +30,8 @@ const HomePage = () => {
   const [editingCompany, setEditingCompany] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalEmpresas, setTotalEmpresas] = useState(0)
+  const [title, setTitle] = useState("Minhas Empresas")
 
   useEffect(() => {
     loadCompanies(page, rowsPerPage);
@@ -41,8 +43,8 @@ const HomePage = () => {
         pagina: parseInt(pagina),
         limite: parseInt(limite),
       });
-      console.log(response);
-      setUserCompanies(response.data);
+      setUserCompanies(response.data.empresas);
+      setTotalEmpresas(response.data.totalEmpresas)
     } catch (error) {
       console.error("Erro ao carregar as empresas do usuário:", error);
     }
@@ -118,7 +120,7 @@ const HomePage = () => {
 
   return (
     <ProtectedLayout>
-      <Header />
+      <Header title={title} />
       {userCompanies && userCompanies.length > 0 ? (
         <Box alignItems="center" height="calc(100vh - 128px)">
           <CompanyList
@@ -130,7 +132,9 @@ const HomePage = () => {
             setPage={setPage}
             setRowsPerPage={setRowsPerPage}
             loadCompanies={loadCompanies}
-             handleDeleteCompany={handleDeleteCompany}
+            handleDeleteCompany={handleDeleteCompany}
+            totalCompanys={totalEmpresas}
+            setTitle={setTitle}
           />
         </Box>
       ) : (

@@ -108,7 +108,7 @@ const CreateCompanyModal = ({ open, onClose, onSubmit, editingCompany }) => {
     event.preventDefault();
     if (validateFields()) {
       onSubmit({ nome:name, website, cnpj });
-      onClose();
+      onCloseModal();
     }
   };
 
