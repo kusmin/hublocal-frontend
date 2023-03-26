@@ -1,10 +1,12 @@
 import {
   Box,
-  Button, IconButton,
-  Modal, Typography
+  Button,
+  IconButton,
+  Modal,
+  Typography
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import React from 'react';
+import React, { memo } from 'react';
 
 const useStyles = makeStyles((theme) => ({
   modalContainer: {
@@ -46,25 +48,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DeleteCompanyModal = ({ open, onClose, onDelete, companyName, companyId }) => {
+const modalHeaderStyles = {
+  borderRadius: 5,
+  maxWidth: 800,
+  maxHeight: 400,
+  width: '100%',
+};
+
+const DeleteCompanyModal = memo(({ open, onClose, onDelete, companyName, companyId }) => {
   const classes = useStyles();
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
-        <Box bgcolor="white" borderRadius={5} maxWidth={800} maxHeight={400} width="100%">
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+        <Box bgcolor="white" {...modalHeaderStyles}>
           <Box className={classes.modalHeader}>
             <Typography variant="h4">Confirmação de exclusão</Typography>
             <IconButton className={classes.closeButton} onClick={onClose} aria-label="Fechar">
               &times;
             </IconButton>
           </Box>
-        <Box p={2} display="flex" flexDirection="column" minHeight={200} justifyContent="space-between">
+          <Box p={2} display="flex" flexDirection="column" minHeight={200} justifyContent="space-between">
             <Typography variant="h5" p={3}>
               A empresa <span className={classes.companyName}>{companyName}</span> será excluída. Tem certeza dessa ação?
             </Typography>
@@ -72,7 +76,7 @@ const DeleteCompanyModal = ({ open, onClose, onDelete, companyName, companyId })
               <Button
                 variant="contained"
                 className={classes.deleteButton}
-                onClick={()=> onDelete(companyId, onClose)}
+                onClick={() => onDelete(companyId, onClose)}
               >
                 Excluir
               </Button>
@@ -82,6 +86,6 @@ const DeleteCompanyModal = ({ open, onClose, onDelete, companyName, companyId })
       </Box>
     </Modal>
   );
-};
+});
 
 export default DeleteCompanyModal;
