@@ -6,7 +6,7 @@ import {
   Typography
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { memo } from 'react';
+import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
   modalContainer: {
@@ -55,7 +55,7 @@ const modalHeaderStyles = {
   width: '100%',
 };
 
-const DeleteCompanyModal = memo(({ open, onClose, onDelete, companyName, companyId }) => {
+const DeleteCompanyModal = ({ open, onClose, onDelete, companyName, companyId }) => {
   const classes = useStyles();
 
   return (
@@ -86,6 +86,6 @@ const DeleteCompanyModal = memo(({ open, onClose, onDelete, companyName, company
       </Box>
     </Modal>
   );
-});
+};
 
 export default DeleteCompanyModal;
