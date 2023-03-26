@@ -1,7 +1,14 @@
-import { Grid, Paper } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Grid,
+  Paper,
+  TextField,
+  Typography
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Box, Button, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -76,16 +83,23 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
   },
+  greenBoxText: {
+    color: "#fff",
+    marginBottom: theme.spacing(3),
+    width: "60%",
+    fontFamily: "Poppins",
+    textAlign: "center",
+    fontSize: "1em",
+    display: "block",
+  },
   greenBoxTitle: {
     color: "#fff",
     fontWeight: "bold",
     marginBottom: theme.spacing(2),
     fontFamily: "Poppins",
-  },
-  greenBoxText: {
-    color: "#fff",
-    marginBottom: theme.spacing(2),
-    fontFamily: "Poppins",
+    textAlign: "center",
+    fontSize: "2em",
+    width: "60%",
   },
   registerButton: {
     backgroundColor: "#2196f3",
@@ -110,8 +124,20 @@ const LoginPage = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      showToast("error", "Por favor, corrija os erros do formulário.");
+    }
+  }, [errors]);
+
+  const onSubmit = async () => {
+
     setLoading(true);
 
     try {
@@ -153,30 +179,10 @@ const LoginPage = () => {
             justifyContent="center"
             alignItems="center"
           >
-            <Typography
-              variant="h6"
-              sx={{
-                color: "white",
-                fontWeight: 700,
-                fontFamily: "Poppins",
-                textAlign: "center",
-                fontSize: "2em",
-                width: "60%",
-              }}
-            >
+            <Typography variant="h6" className={classes.greenBoxTitle}>
               Junte-se a vários clientes satisfeitos.
             </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                color: "white",
-                fontWeight: 400,
-                fontFamily: "Poppins",
-                textAlign: "center",
-                fontSize: "1em",
-                width: "60%",
-              }}
-            >
+            <Typography variant="body1" className={classes.greenBoxText}>
               Cliente HubLocal ganha mais relevância, autoridade e visibilidade.
               Mais de 7.000 marcas confiam na nossa plataforma. Seja uma delas!
             </Typography>
@@ -184,26 +190,35 @@ const LoginPage = () => {
         </Paper>
       </Grid>
       <Grid item xs={12} md={6} className={classes.rightSection}>
-        <form className={classes.formContainer} onSubmit={handleSubmit}>
+        <form
+          className={classes.formContainer}
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <img src={companyLogo} alt="Empresa" className={classes.logo} />
           <TextField
             sx={{ marginBottom: "1em" }}
+            {...register("email", { required: "Email é obrigatório" })}
             className={classes.textField}
             label="Email"
             fullWidth
             variant="outlined"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            error={Boolean(errors.email)}
+            helperText={errors.email?.message}
           />
           <TextField
             sx={{ marginBottom: "1em" }}
             className={classes.textField}
+            {...register("password", { required: "Senha é obrigatória" })}
             label="Senha"
             type="password"
             fullWidth
             variant="outlined"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            error={Boolean(errors.password)}
+            helperText={errors.password?.message}
           />
           <Button
             sx={{ marginBottom: "1em" }}

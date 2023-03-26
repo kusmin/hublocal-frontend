@@ -1,6 +1,14 @@
-import { Grid, Paper } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Grid,
+  Paper,
+  TextField,
+  Typography,
+  useTheme
+} from "@material-ui/core";
+
 import { makeStyles } from "@material-ui/core/styles";
-import { Box, Button, TextField, Typography, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +21,26 @@ const useStyles = makeStyles((theme) => ({
     minHeight: "100vh",
     display: "flex",
   },
+
+  greenBoxText: {
+  color: "#fff",
+  marginBottom: theme.spacing(3),
+  width: "60%",
+  fontFamily: "Poppins",
+  textAlign: "center",
+  fontSize: "1em",
+  display: "block",
+  },
+  greenBoxTitle: {
+    color: "#fff",
+    fontWeight: "bold",
+    marginBottom: theme.spacing(2),
+    fontFamily: "Poppins",
+    textAlign: "center",
+    fontSize: "2em",
+    width: "60%",
+  },
+
   leftSection: {
     display: "flex",
     flexDirection: "column",
@@ -35,6 +63,18 @@ const useStyles = makeStyles((theme) => ({
   },
   textField: {
     marginBottom: theme.spacing(2),
+  },
+  registerButton: {
+    backgroundColor: "#2196f3",
+    color: "white",
+    marginBottom: theme.spacing(2),
+    width: "100%",
+  },
+  loginButton: {
+    backgroundColor: "#4caf50",
+    color: "white",
+    marginBottom: theme.spacing(2),
+    width: "100%",
   },
   image: {
     maxWidth: "100%",
@@ -74,38 +114,22 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#00CC99",
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
-  },
-  greenBoxTitle: {
     color: "#fff",
-    fontWeight: "bold",
-    marginBottom: theme.spacing(2),
-    fontFamily: "Poppins",
-  },
-  greenBoxText: {
-    color: "#fff",
-    marginBottom: theme.spacing(2),
-    fontFamily: "Poppins",
-  },
-  registerButton: {
-    backgroundColor: "#2196f3",
-    color: "white",
-    marginBottom: theme.spacing(2),
-    width: "100%",
-  },
-  loginButton: {
-    backgroundColor: "#4caf50",
-    color: "white",
-    width: "100%",
   },
 }));
 
 const RegisterPage = () => {
-  const [name, setName] = useState("");
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { register, handleSubmit, watch, errors } = useForm();
-   const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+  const [loading, setLoading] = useState(false);
 
   const companyLogo = `${process.env.PUBLIC_URL}/company-logo.png`;
   const companyImage = `${process.env.PUBLIC_URL}/company-image.png`;
@@ -114,25 +138,29 @@ const RegisterPage = () => {
   const classes = useStyles();
 
   const onSubmit = async (data) => {
-    if (!validateForm()) {
-      return;
-    }
     setLoading(true);
 
     try {
       await AuthService.register({
-        nome: data.name,
-        email: data.email,
-        senha: data.password,
+        nome: nome,
+        email: email,
+        senha: password,
       });
       showToast("success", "Conta criada com sucesso!");
       setTimeout(() => {
         navigate("/login");
       }, 1000);
     } catch (error) {
-      let text = "Ocorreu um erro ao criar a conta. Por favor, tente novamente.";
-      if (error && error.response && error.response.data && error.response.data.message && error.response.data.message === "Email já cadastrado.") {
-        text = "Já existe uma conta cadastrada com este email."
+      let text =
+        "Ocorreu um erro ao criar a conta. Por favor, tente novamente.";
+      if (
+        error &&
+        error.response &&
+        error.response.data &&
+        error.response.data.message &&
+        error.response.data.message === "Email já cadastrado."
+      ) {
+        text = "Já existe uma conta cadastrada com este email.";
       }
       Swal.fire({
         icon: "error",
@@ -140,37 +168,9 @@ const RegisterPage = () => {
         text: text,
       });
       console.error("Erro ao criar a conta:", error);
+    } finally {
+      setLoading(false);
     }
-    finally {
-      setLoading(false); 
-    }
-  };
-
-  const validateForm = () => {
-    if (
-      name.trim() === "" ||
-      email.trim() === "" ||
-      password.trim() === "" ||
-      confirmPassword.trim() === ""
-    ) {
-      Swal.fire({
-        icon: "error",
-        title: "Erro",
-        text: "Por favor, preencha todos os campos.",
-      });
-      return false;
-    }
-
-    if (password !== confirmPassword) {
-      Swal.fire({
-        icon: "error",
-        title: "Erro",
-        text: "As senhas não coincidem. Por favor, verifique e tente novamente.",
-      });
-      return false;
-    }
-
-    return true;
   };
 
   return (
@@ -194,30 +194,10 @@ const RegisterPage = () => {
             justifyContent="center"
             alignItems="center"
           >
-            <Typography
-              variant="h6"
-              sx={{
-                color: "white",
-                fontWeight: 700,
-                fontFamily: "Poppins",
-                textAlign: "center",
-                fontSize: "2em",
-                width: "60%",
-              }}
-            >
+            <Typography variant="h6" className={classes.greenBoxTitle}>
               Junte-se a vários clientes satisfeitos.
             </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                color: "white",
-                fontWeight: 400,
-                fontFamily: "Poppins",
-                textAlign: "center",
-                fontSize: "1em",
-                width: "60%",
-              }}
-            >
+            <Typography variant="body1" className={classes.greenBoxText}>
               Cliente HubLocal ganha mais relevância, autoridade e visibilidade.
               Mais de 7.000 marcas confiam na nossa plataforma. Seja uma delas!
             </Typography>
@@ -233,53 +213,68 @@ const RegisterPage = () => {
           <TextField
             sx={{ marginBottom: "1em" }}
             className={classes.textField}
-            {...register("name", { required: true })}
-            name="name"
+            {...register("nome", { required: "Nome é obrigatório" })}
+            name="nome"
             label="Nome"
             fullWidth
             variant="outlined"
-            error={errors?.name}
-            helperText={errors?.name && "Nome é obrigatório"}
-            onChange={(e) => setName(e.target.value)}
+            error={Boolean(errors.nome)}
+            helperText={errors.nome?.message}
+            onChange={(e) => setNome(e.target.value)}
           />
           <TextField
             sx={{ marginBottom: "1em" }}
             className={classes.textField}
-            {...register("email", { required: true })}
+            {...register("email", {
+              required: "Email é obrigatório",
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Email inválido",
+              },
+            })}
             name="email"
             label="Email"
             fullWidth
             variant="outlined"
-            error={errors?.email}
-            helperText={errors?.email && "Email é obrigatório"}
+            error={Boolean(errors.email)}
+            helperText={errors.email?.message}
             onChange={(e) => setEmail(e.target.value)}
           />
+
           <TextField
             sx={{ marginBottom: "1em" }}
             className={classes.textField}
-            {...register("password", { required: true })}
+            {...register("password", {
+              required: "Senha é obrigatória",
+              minLength: {
+                value: 6,
+                message: "A senha deve ter pelo menos 6 dígitos",
+              },
+            })}
             name="password"
             label="Senha"
             type="password"
             fullWidth
             variant="outlined"
-            error={errors?.password}
-            helperText={errors?.password && "Senha é obrigatória"}
+            error={Boolean(errors.password)}
+            helperText={errors.password?.message}
             onChange={(e) => setPassword(e.target.value)}
           />
           <TextField
             sx={{ marginBottom: "1em" }}
             className={classes.textField}
-            {...register("confirmPassword", { required: true })}
+            {...register("confirmPassword", {
+              required: "Confirmação de senha é obrigatória",
+              validate: (value) =>
+                value === watch("password") || "As senhas não coincidem",
+            })}
             name="confirmPassword"
             label="Confirmar Senha"
             type="password"
             fullWidth
             variant="outlined"
-            error={errors?.confirmPassword}
-            helperText={
-              errors?.confirmPassword && "Confirmação de senha é obrigatória"
-            }
+            error={Boolean(errors.confirmPassword)}
+            helperText={errors.confirmPassword?.message}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <Button
@@ -301,7 +296,6 @@ const RegisterPage = () => {
             variant="contained"
             size="large"
             onClick={() => navigate("/login")}
-            
           >
             Logar
           </Button>
