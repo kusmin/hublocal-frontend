@@ -284,6 +284,7 @@ const RegisterPage = () => {
             fullWidth
             variant="contained"
             size="large"
+            onClick={handleSubmit(onSubmit)}
           >
             Registrar
           </Button>
@@ -294,6 +295,7 @@ const RegisterPage = () => {
             variant="contained"
             size="large"
             onClick={() => navigate("/login")}
+            
           >
             Logar
           </Button>
