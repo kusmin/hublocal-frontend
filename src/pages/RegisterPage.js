@@ -105,6 +105,7 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const { register, handleSubmit, watch, errors } = useForm();
+   const [loading, setLoading] = useState(false);
 
   const companyLogo = `${process.env.PUBLIC_URL}/company-logo.png`;
   const companyImage = `${process.env.PUBLIC_URL}/company-image.png`;
@@ -116,6 +117,7 @@ const RegisterPage = () => {
     if (!validateForm()) {
       return;
     }
+    setLoading(true);
 
     try {
       await AuthService.register({
@@ -138,6 +140,9 @@ const RegisterPage = () => {
         text: text,
       });
       console.error("Erro ao criar a conta:", error);
+    }
+    finally {
+      setLoading(false); 
     }
   };
 
@@ -285,8 +290,9 @@ const RegisterPage = () => {
             variant="contained"
             size="large"
             onClick={handleSubmit(onSubmit)}
+            disabled={loading}
           >
-            Registrar
+            {loading ? "Carregando..." : "Registrar"}
           </Button>
           <Button
             sx={{ backgroundColor: "#4caf50", color: "white", mb: 2 }}
