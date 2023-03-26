@@ -93,9 +93,13 @@ const HomePage = () => {
         showToast("success", "Empresa criada com sucesso!");
         callback()
       } catch (e) {
+        let text = "Ocorreu ao criar a empresa. Por favor,verifique as informaçoes inseridas e tente novamente.";
+      if (e && e.response && e.response.data && e.response.data.message && e.response.data.message === "CNPJ já registrado por outra empresa") {
+        text = "Já existe uma empresa cadastrada com este cnpj."
+      }
         showToast(
           "error",
-          "Ocorreu ao criar a empresa. Por favor,verifique as informaçoes inseridas e tente novamente."
+          text
         );
         console.error(e);
       }
