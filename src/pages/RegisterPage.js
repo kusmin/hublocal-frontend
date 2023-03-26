@@ -126,7 +126,7 @@ const RegisterPage = () => {
       showToast("success", "Conta criada com sucesso!");
       setTimeout(() => {
         navigate("/login");
-      }, 3000);
+      }, 1000);
     } catch (error) {
       let text = "Ocorreu um erro ao criar a conta. Por favor, tente novamente.";
       if (error && error.response && error.response.data && error.response.data.message && error.response.data.message === "Email já cadastrado.") {
