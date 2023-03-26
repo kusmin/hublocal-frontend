@@ -10,6 +10,7 @@ import {
   Typography
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
 import InputMask from "react-input-mask";
 import validateCNPJ from "../utils/cnpjValidation";
@@ -49,72 +50,85 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CreateCompanyModal = ({ open, onClose, onSubmit, editingCompany }) => {
+  CreateCompanyModal.propTypes = {
+    open: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+    editingCompany: PropTypes.object,
+  };
   const classes = useStyles();
-  const [cnpj, setCnpj] = useState("");
-  const [name, setName] = useState("");
-  const [website, setWebsite] = useState("");
-
-  const [errors, setErrors] = useState({
-    name: "",
+  const [formValues, setFormValues] = useState({
+    nome: "",
+    website: "",
+    cnpj: "",
+  });
+  const [validation, setValidation] = useState({
+    nome: "",
     website: "",
     cnpj: "",
   });
 
   useEffect(() => {
     if (editingCompany) {
-      setName(editingCompany.nome);
-      setCnpj(editingCompany.cnpj);
-      setWebsite(editingCompany.website);
+      setFormValues({
+        nome: editingCompany.nome,
+        website: editingCompany.website,
+        cnpj: editingCompany.cnpj,
+      });
     } else {
-      setName("");
-      setCnpj("");
-      setWebsite("");
+      setFormValues({
+        nome: "",
+        website: "",
+        cnpj: "",
+      });
     }
   }, [editingCompany]);
 
-  const validateFields = useCallback(() => {
+  const validateForm = useCallback(() => {
     let hasErrors = false;
-    const newErrors = {
-      name: "",
+    const newValidation = {
+      nome: "",
       website: "",
       cnpj: "",
     };
 
-    if (!name) {
+    if (!formValues.nome) {
       hasErrors = true;
-      newErrors.name = "Nome é obrigatório";
+      newValidation.nome = "Nome é obrigatório";
     }
 
-    if (!website) {
+    if (!formValues.website) {
       hasErrors = true;
-      newErrors.website = "Website é obrigatório";
+      newValidation.website = "Website é obrigatório";
     }
 
-    if (!cnpj || !validateCNPJ(cnpj)) {
+    if (!formValues.cnpj || !validateCNPJ(formValues.cnpj)) {
       hasErrors = true;
-      newErrors.cnpj = "CNPJ inválido";
+      newValidation.cnpj = "CNPJ inválido";
     }
 
-    setErrors(newErrors);
+    setValidation(newValidation);
 
     return !hasErrors;
-  }, [name, website, cnpj]);
+  }, [formValues]);
 
   const onCloseModal = useCallback(() => {
-    setCnpj("");
-    setWebsite("");
-    setName("");
+    setFormValues({
+      nome: "",
+      website: "",
+      cnpj: "",
+    });
     onClose();
   }, [onClose]);
 
   const handleSubmit = useCallback(
     (event) => {
       event.preventDefault();
-      if (validateFields()) {
-        onSubmit({ nome: name, website, cnpj }, onCloseModal);
+      if (validateForm()) {
+        onSubmit(formValues, onCloseModal);
       }
     },
-    [validateFields, onSubmit, name, website, cnpj, onCloseModal]
+    [validateForm, onSubmit, formValues, onCloseModal]
   );
 
   return (
@@ -134,7 +148,9 @@ const CreateCompanyModal = ({ open, onClose, onSubmit, editingCompany }) => {
         >
           <Box className={classes.modalHeader}>
             <Typography variant="h4">
-              {editingCompany ? `Editar:${name}` : "Adicionar Empresa"}
+              {editingCompany
+                ? `Editar:${formValues.nome}`
+                : "Adicionar Empresa"}
             </Typography>
             <IconButton className={classes.closeButton} onClick={onCloseModal}>
               &times;
@@ -146,53 +162,59 @@ const CreateCompanyModal = ({ open, onClose, onSubmit, editingCompany }) => {
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                error={!!errors.name}
+                error={!!validation.nome}
               >
                 <InputLabel htmlFor="companyName">Nome</InputLabel>
                 <OutlinedInput
                   id="companyName"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={formValues.nome}
+                  onChange={(e) =>
+                    setFormValues({ ...formValues, nome: e.target.value })
+                  }
                   required
                   label="Nome"
                 />
-                <FormHelperText>{errors.name}</FormHelperText>
+                <FormHelperText>{validation.nome}</FormHelperText>
               </FormControl>
               <Box display="flex" justifyContent="space-between">
                 <FormControl
                   margin="normal"
                   variant="outlined"
-                  error={!!errors.website}
+                  error={!!validation.website}
                   width="48%"
                 >
                   <InputLabel htmlFor="companyWebsite">Website</InputLabel>
                   <OutlinedInput
                     id="companyWebsite"
-                    value={website}
-                    onChange={(e) => setWebsite(e.target.value)}
+                    value={formValues.website}
+                    onChange={(e) =>
+                      setFormValues({ ...formValues, website: e.target.value })
+                    }
                     required
                     label="Website"
                   />
-                  <FormHelperText>{errors.website}</FormHelperText>
+                  <FormHelperText>{validation.website}</FormHelperText>
                 </FormControl>
 
                 <FormControl
                   margin="normal"
                   variant="outlined"
-                  error={!!errors.cnpj}
+                  error={!!validation.cnpj}
                   width="48%"
                 >
                   <InputLabel htmlFor="companyCNPJ">CNPJ</InputLabel>
                   <InputMask
                     mask="99.999.999/9999-99"
-                    value={cnpj}
-                    onChange={(e) => setCnpj(e.target.value)}
+                    value={formValues.cnpj}
+                    onChange={(e) =>
+                      setFormValues({ ...formValues, cnpj: e.target.value })
+                    }
                   >
                     {() => (
                       <OutlinedInput id="companyCNPJ" required label="CNPJ" />
                     )}
                   </InputMask>
-                  <FormHelperText>{errors.cnpj}</FormHelperText>
+                  <FormHelperText>{validation.cnpj}</FormHelperText>
                 </FormControl>
               </Box>
               <Box display="flex" justifyContent="flex-end" marginTop="1em">
