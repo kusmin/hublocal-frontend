@@ -66,25 +66,23 @@ const CreateLocalModal = ({ open, onClose, onSubmit, editingLocal }) => {
 
   useEffect(() => {
     const updateAddressData = async () => {
-    
-    if (cep && cep.length === 9) {
-      const cepBuscar = parseInt(cep.trim().replace("-", ""))
-      
-      if (!isNaN(cepBuscar) && cepBuscar.toString().length === 8) {
-      const data = await importCep(cep);
-      if (data) {
-        setRua(data.rua);
-        setBairro(data.bairro);
-        setCidade(data.cidade);
-        setEstado(data.estado);
-      }
-      }
-      
-    }
-  };
+      if (cep && cep.length === 9) {
+        const cepBuscar = parseInt(cep.trim().replace("-", ""));
 
-  updateAddressData();
-}, [cep]);
+        if (!isNaN(cepBuscar) && cepBuscar.toString().length === 8) {
+          const data = await importCep(cep);
+          if (data) {
+            setRua(data.rua);
+            setBairro(data.bairro);
+            setCidade(data.cidade);
+            setEstado(data.estado);
+          }
+        }
+      }
+    };
+
+    updateAddressData();
+  }, [cep]);
 
   const [errors, setErrors] = useState({
     nome: "",
@@ -95,27 +93,21 @@ const CreateLocalModal = ({ open, onClose, onSubmit, editingLocal }) => {
     cidade: "",
     estado: "",
   });
-  const limparCampos = () => {
-    setCep("");
-    setNome("");
-    setRua("");
-    setNumero("");
-    setBairro("");
-    setCidade("");
-    setEstado("");
+   const setFieldValues = (fields) => {
+    setNome(fields.nome || "");
+    setCep(fields.cep || "");
+    setRua(fields.rua || "");
+    setNumero(fields.numero || "");
+    setBairro(fields.bairro || "");
+    setCidade(fields.cidade || "");
+    setEstado(fields.estado || "");
   };
 
   useEffect(() => {
     if (editingLocal) {
-      setCep(editingLocal.cep);
-      setNome(editingLocal.nome);
-      setRua(editingLocal.rua);
-      setNumero(editingLocal.numero);
-      setBairro(editingLocal.bairro);
-      setCidade(editingLocal.cidade);
-      setEstado(editingLocal.estado);
+      setFieldValues(editingLocal);
     } else {
-      limparCampos();
+      setFieldValues({});
     }
   }, [editingLocal]);
 
@@ -123,8 +115,12 @@ const CreateLocalModal = ({ open, onClose, onSubmit, editingLocal }) => {
     let hasErrors = false;
     const newErrors = {
       name: "",
-      website: "",
-      cnpj: "",
+      cep: "",
+      rua: "",
+      numero: "",
+      bairro: "",
+      cidade: "",
+      estado: "",
     };
 
     if (!nome) {
@@ -136,7 +132,7 @@ const CreateLocalModal = ({ open, onClose, onSubmit, editingLocal }) => {
       hasErrors = true;
       newErrors.cep = "Cep é obrigatório";
     } else {
-       const cepRegex = /^\d{5}-\d{3}$/;
+      const cepRegex = /^\d{5}-\d{3}$/;
       if (!cepRegex.test(cep)) {
         return { valid: false, message: "Formato de CEP inválido" };
       }
@@ -175,12 +171,23 @@ const CreateLocalModal = ({ open, onClose, onSubmit, editingLocal }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (validateFields()) {
-      onSubmit({ nome, cep: cep.trim().replace("-", ""), rua, numero, bairro, cidade, estado }, onCloseModal);
+      onSubmit(
+        {
+          nome,
+          cep: cep.trim().replace("-", ""),
+          rua,
+          numero,
+          bairro,
+          cidade,
+          estado,
+        },
+        onCloseModal
+      );
     }
   };
 
   const onCloseModal = () => {
-    limparCampos();
+    setFieldValues({});
     onClose();
   };
 
