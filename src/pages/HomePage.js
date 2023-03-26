@@ -77,12 +77,20 @@ const HomePage = () => {
         );
         handleCloseModal();
         showToast("success", "Empresa atualizada com sucesso!");
-        callback()
+        callback();
       } catch (e) {
-        showToast(
-          "error",
-          "Ocorreu um erro ao atualizar a empresa. Por favor, verifique as informações inseridas e tente novamente."
-        );
+        let text =
+          "Ocorreu um erro ao atualizar a empresa. Por favor, verifique as informações inseridas e tente novamente.";
+        if (
+          e &&
+          e.response &&
+          e.response.data &&
+          e.response.data.message &&
+          e.response.data.message === "CNPJ já registrado por outra empresa"
+        ) {
+          text = "Já existe uma empresa cadastrada com este cnpj.";
+        }
+        showToast("error", text);
         console.error(e);
       }
     } else {
@@ -91,16 +99,20 @@ const HomePage = () => {
         setUserCompanies([...userCompanies, novaEmpresa.data]);
         handleCloseModal();
         showToast("success", "Empresa criada com sucesso!");
-        callback()
+        callback();
       } catch (e) {
-        let text = "Ocorreu ao criar a empresa. Por favor,verifique as informaçoes inseridas e tente novamente.";
-      if (e && e.response && e.response.data && e.response.data.message && e.response.data.message === "CNPJ já registrado por outra empresa") {
-        text = "Já existe uma empresa cadastrada com este cnpj."
-      }
-        showToast(
-          "error",
-          text
-        );
+        let text =
+          "Ocorreu ao criar a empresa. Por favor,verifique as informaçoes inseridas e tente novamente.";
+        if (
+          e &&
+          e.response &&
+          e.response.data &&
+          e.response.data.message &&
+          e.response.data.message === "CNPJ já registrado por outra empresa"
+        ) {
+          text = "Já existe uma empresa cadastrada com este cnpj.";
+        }
+        showToast("error", text);
         console.error(e);
       }
     }
