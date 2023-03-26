@@ -128,10 +128,14 @@ const RegisterPage = () => {
         navigate("/login");
       }, 3000);
     } catch (error) {
+      let text = "Ocorreu um erro ao criar a conta. Por favor, tente novamente.";
+      if (error && error.response && error.response.data && error.response.data.message && error.response.data.message === "Email já cadastrado.") {
+        text = "Já existe uma conta cadastrada com este email."
+      }
       Swal.fire({
         icon: "error",
         title: "Erro",
-        text: "Ocorreu um erro ao criar a conta. Por favor, tente novamente.",
+        text: text,
       });
       console.error("Erro ao criar a conta:", error);
     }
