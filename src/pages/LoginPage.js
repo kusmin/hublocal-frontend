@@ -108,9 +108,11 @@ const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const classes = useStyles();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
 
     try {
       const response = await AuthService.auth({ username: email, password });
@@ -125,6 +127,8 @@ const LoginPage = () => {
         text: "Ocorreu um erro ao logar. Por favor,verifique suas credenciais e tente novamente.",
       });
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -180,49 +184,50 @@ const LoginPage = () => {
         </Paper>
       </Grid>
       <Grid item xs={12} md={6} className={classes.rightSection}>
-      <form className={classes.formContainer} onSubmit={handleSubmit}>
-        <img src={companyLogo} alt="Empresa" className={classes.logo} />
-        <TextField
-          sx={{ marginBottom: "1em" }}
-          className={classes.textField}
-          label="Email"
-          fullWidth
-          variant="outlined"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextField
-          sx={{ marginBottom: "1em" }}
-          className={classes.textField}
-          label="Senha"
-          type="password"
-          fullWidth
-          variant="outlined"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button
-          sx={{ marginBottom: "1em" }}
-          className={`${classes.loginButton} ${classes.textField}`}
-          fullWidth
-          variant="contained"
-          size="large"
-          type="submit"
-        >
-          Entrar
-        </Button>
-        <Button
-          sx={{ backgroundColor: "#4caf50", color: "white", mb: 2 }}
-          className={`${classes.registerButton} ${classes.textField}`}
-          fullWidth
-          variant="contained"
-          size="large"
-          component={Link}
-          to="/register"
-        >
-          Criar conta
-        </Button>
-       </form>
+        <form className={classes.formContainer} onSubmit={handleSubmit}>
+          <img src={companyLogo} alt="Empresa" className={classes.logo} />
+          <TextField
+            sx={{ marginBottom: "1em" }}
+            className={classes.textField}
+            label="Email"
+            fullWidth
+            variant="outlined"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            sx={{ marginBottom: "1em" }}
+            className={classes.textField}
+            label="Senha"
+            type="password"
+            fullWidth
+            variant="outlined"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button
+            sx={{ marginBottom: "1em" }}
+            className={`${classes.loginButton} ${classes.textField}`}
+            fullWidth
+            variant="contained"
+            size="large"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Carregando..." : "Entrar"}
+          </Button>
+          <Button
+            sx={{ backgroundColor: "#4caf50", color: "white", mb: 2 }}
+            className={`${classes.registerButton} ${classes.textField}`}
+            fullWidth
+            variant="contained"
+            size="large"
+            component={Link}
+            to="/register"
+          >
+            Criar conta
+          </Button>
+        </form>
       </Grid>
     </Grid>
   );
