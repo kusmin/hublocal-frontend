@@ -1,7 +1,6 @@
 import { Box, Button, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import CreateCompanyModal from "../components/CriarEmpresa";
 import Header from "../components/Header";
 import CompanyList from "../components/ListarEmpresa";
@@ -127,11 +126,7 @@ const HomePage = () => {
       showToast("success", "Empresa excluída com sucesso!");
       callback();
     } catch (e) {
-      Swal.fire({
-        icon: "error",
-        title: "Erro",
-        text: "Ocorreu um erro ao excluir a empresa. Por favor, tente novamente.",
-      });
+      showToast("error", "Ocorreu um erro ao excluir a empresa. Por favor, tente novamente.");
       console.error(e);
     }
   };

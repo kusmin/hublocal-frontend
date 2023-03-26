@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import ArrowBack from "@material-ui/icons/ArrowBack";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
 import CreateLocalModal from "../components/CriarLocal";
 import Header from "../components/Header";
 import ListarLocais from "../components/ListarLocais";
@@ -98,11 +97,7 @@ const Locais = () => {
         showToast("success", "Local atualizada com sucesso!");
         callback()
       } catch (e) {
-        Swal.fire({
-          icon: "error",
-          title: "Erro",
-          text: "Ocorreu um erro ao atualizar a local. Por favor, verifique as informações inseridas e tente novamente.",
-        });
+        showToast("error",  "Ocorreu um erro ao atualizar a local. Por favor, verifique as informações inseridas e tente novamente.");
         console.error(e);
       }
     } else {
@@ -128,11 +123,7 @@ const Locais = () => {
       showToast("success", "Local excluída com sucesso!");
       callback();
     } catch (e) {
-      Swal.fire({
-        icon: "error",
-        title: "Erro",
-        text: "Ocorreu um erro ao excluir a local. Por favor, tente novamente.",
-      });
+      showToast("error",  "Ocorreu um erro ao excluir a local. Por favor, tente novamente.");
       console.error(e);
     }
   };
